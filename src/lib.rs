@@ -196,7 +196,7 @@ impl Encoder {
 
         call_vpx_ptr!(vpx_img_wrap(
             &mut image,
-            vpx_img_fmt::VPX_IMG_FMT_I420,
+            vpx_img_fmt::VPX_IMG_FMT_NV12,
             self.width as _,
             self.height as _,
             1,
