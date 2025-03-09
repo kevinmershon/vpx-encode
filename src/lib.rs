@@ -158,6 +158,8 @@ impl Encoder {
             }
             #[cfg(feature = "vp9")]
             VideoCodecId::VP9 => {
+                c.rc_min_quantizer = 2;
+                c.rc_max_quantizer = 50;
                 call_vpx!(vpx_codec_enc_init_ver(
                     &mut ctx,
                     i,
@@ -169,13 +171,19 @@ impl Encoder {
                 call_vpx!(vpx_codec_control_(
                     &mut ctx,
                     VP8E_SET_CPUUSED as _,
-                    6 as c_int
+                    8 as c_int
                 ));
                 // set row level multi-threading
                 call_vpx!(vpx_codec_control_(
                     &mut ctx,
                     VP9E_SET_ROW_MT as _,
                     1 as c_int
+                ));
+                // set static threshold to 0
+                call_vpx!(vpx_codec_control_(
+                    &mut ctx,
+                    VP8E_SET_STATIC_THRESHOLD as _,
+                    0 as c_int
                 ));
             }
         };
