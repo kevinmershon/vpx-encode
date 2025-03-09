@@ -65,6 +65,7 @@ impl Default for VideoCodecId {
 
 pub struct Encoder {
     ctx: vpx_codec_ctx_t,
+    cfg: vpx_codec_enc_cfg,
     width: usize,
     height: usize,
 }
@@ -190,6 +191,7 @@ impl Encoder {
 
         Ok(Self {
             ctx,
+            cfg: c,
             width: config.width as usize,
             height: config.height as usize,
         })
@@ -223,6 +225,23 @@ impl Encoder {
             ctx: &mut self.ctx,
             iter: ptr::null(),
         })
+    }
+
+    /// Sets a new target bitrate for the encoder
+    pub fn set_bitrate(&mut self, bitrate: c_uint) -> Result<()> {
+        self.cfg.rc_target_bitrate = bitrate;
+        call_vpx!(vpx_codec_enc_config_set(&mut self.ctx, &self.cfg));
+        Ok(())
+    }
+
+    /// Sets new dimensions for the encoder
+    pub fn set_dimensions(&mut self, width: u32, height: u32) -> Result<()> {
+        self.width = width as usize;
+        self.height = height as usize;
+        self.cfg.g_w = width;
+        self.cfg.g_h = height;
+        call_vpx!(vpx_codec_enc_config_set(&mut self.ctx, &self.cfg));
+        Ok(())
     }
 
     pub fn finish(mut self) -> Result<Finish> {
