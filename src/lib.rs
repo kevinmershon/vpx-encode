@@ -140,6 +140,7 @@ impl Encoder {
         c.g_timebase.num = config.timebase[0];
         c.g_timebase.den = config.timebase[1];
         c.rc_target_bitrate = config.bitrate;
+        c.g_lag_in_frames = 0;
 
         c.g_threads = 8;
         c.g_error_resilient = VPX_ERROR_RESILIENT_DEFAULT;
@@ -159,7 +160,7 @@ impl Encoder {
             }
             #[cfg(feature = "vp9")]
             VideoCodecId::VP9 => {
-                c.rc_min_quantizer = 2;
+                c.rc_min_quantizer = 0;
                 c.rc_max_quantizer = 50;
                 call_vpx!(vpx_codec_enc_init_ver(
                     &mut ctx,
@@ -172,7 +173,7 @@ impl Encoder {
                 call_vpx!(vpx_codec_control_(
                     &mut ctx,
                     VP8E_SET_CPUUSED as _,
-                    8 as c_int
+                    6 as c_int
                 ));
                 // set row level multi-threading
                 call_vpx!(vpx_codec_control_(
