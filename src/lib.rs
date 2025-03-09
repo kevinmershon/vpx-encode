@@ -30,8 +30,7 @@
 )]
 
 use std::{
-    mem::MaybeUninit,
-    os::raw::{c_int, c_uint, c_ulong},
+    mem::MaybeUninit, ops::{Deref, DerefMut}, os::raw::{c_int, c_uint, c_ulong}
 };
 
 #[cfg(feature = "backtrace")]
@@ -234,6 +233,20 @@ impl Encoder {
         })
     }
 }
+
+impl Deref for Encoder {
+    type Target = vpx_codec_ctx_t;
+    fn deref(&self) -> &Self::Target {
+        &self.ctx
+    }
+}
+impl DerefMut for Encoder {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.ctx
+    }
+}
+unsafe impl Send for Encoder {}
+unsafe impl Sync for Encoder {}
 
 impl Drop for Encoder {
     fn drop(&mut self) {
