@@ -160,8 +160,14 @@ impl Encoder {
             }
             #[cfg(feature = "vp9")]
             VideoCodecId::VP9 => {
+                c.rc_dropframe_thresh = 30;
                 c.rc_min_quantizer = 2;
-                c.rc_max_quantizer = 53;
+                c.rc_max_quantizer = 40;
+                c.rc_undershoot_pct = 50;
+                c.rc_overshoot_pct = 50;
+                c.rc_buf_initial_sz = 0;
+                c.rc_buf_optimal_sz = 0;
+                c.rc_buf_sz = 0;
                 call_vpx!(vpx_codec_enc_init_ver(
                     &mut ctx,
                     i,
@@ -181,11 +187,11 @@ impl Encoder {
                     VP9E_SET_ROW_MT as _,
                     1 as c_int
                 ));
-                // set static threshold to 0
+                // set static threshold to 1
                 call_vpx!(vpx_codec_control_(
                     &mut ctx,
                     VP8E_SET_STATIC_THRESHOLD as _,
-                    0 as c_int
+                    1 as c_int
                 ));
             }
         };
