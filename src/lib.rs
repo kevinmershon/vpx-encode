@@ -142,6 +142,10 @@ impl Encoder {
         c.rc_target_bitrate = config.bitrate;
         c.g_lag_in_frames = 0;
 
+        // set the minimum keyframe interval
+        c.kf_max_dist = 18;
+        c.kf_min_dist = 0;
+
         c.g_threads = 8;
         c.g_error_resilient = VPX_ERROR_RESILIENT_DEFAULT;
 
@@ -187,11 +191,11 @@ impl Encoder {
                     VP9E_SET_ROW_MT as _,
                     1 as c_int
                 ));
-                // set static threshold to 1
+                // set static threshold to 0
                 call_vpx!(vpx_codec_control_(
                     &mut ctx,
                     VP8E_SET_STATIC_THRESHOLD as _,
-                    1 as c_int
+                    0 as c_int
                 ));
             }
         };
