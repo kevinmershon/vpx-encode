@@ -143,7 +143,8 @@ impl Encoder {
         c.g_lag_in_frames = 0;
 
         // set the minimum keyframe interval
-        c.kf_max_dist = 18;
+        c.kf_mode = vpx_sys::vpx_kf_mode::VPX_KF_AUTO;
+        c.kf_max_dist = 72;
         c.kf_min_dist = 0;
 
         c.g_threads = 8;
