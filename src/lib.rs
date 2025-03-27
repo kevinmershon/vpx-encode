@@ -43,6 +43,7 @@ use thiserror::Error;
 use vpx_sys::vp8e_enc_control_id::*;
 use vpx_sys::vpx_codec_cx_pkt_kind::VPX_CODEC_CX_FRAME_PKT;
 use vpx_sys::*;
+use vpx_sys::vpx_rc_mode::*;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum VideoCodecId {
@@ -144,7 +145,7 @@ impl Encoder {
 
         // set the minimum keyframe interval
         c.kf_mode = vpx_sys::vpx_kf_mode::VPX_KF_AUTO;
-        c.kf_max_dist = 72;
+        c.kf_max_dist = 3;
         c.kf_min_dist = 0;
 
         c.g_threads = 8;
@@ -165,14 +166,15 @@ impl Encoder {
             }
             #[cfg(feature = "vp9")]
             VideoCodecId::VP9 => {
-                c.rc_dropframe_thresh = 30;
+                c.rc_dropframe_thresh = 45;
+                c.rc_end_usage = VPX_CBR;
                 c.rc_min_quantizer = 2;
-                c.rc_max_quantizer = 40;
-                c.rc_undershoot_pct = 50;
+                c.rc_max_quantizer = 42;
+                c.rc_undershoot_pct = 10;
                 c.rc_overshoot_pct = 50;
-                c.rc_buf_initial_sz = 0;
-                c.rc_buf_optimal_sz = 0;
-                c.rc_buf_sz = 0;
+                c.rc_buf_initial_sz = 1000;
+                c.rc_buf_optimal_sz = 2600;
+                c.rc_buf_sz = 4000;
                 call_vpx!(vpx_codec_enc_init_ver(
                     &mut ctx,
                     i,
@@ -228,7 +230,7 @@ impl Encoder {
             &mut self.ctx,
             &image,
             pts,
-            1, // Duration
+            self.cfg.g_timebase.den as u64 / 72,
             0, // Flags
             vpx_sys::VPX_DL_REALTIME as c_ulong,
         ));
