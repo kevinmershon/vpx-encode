@@ -166,12 +166,12 @@ impl Encoder {
             }
             #[cfg(feature = "vp9")]
             VideoCodecId::VP9 => {
-                c.rc_dropframe_thresh = 45;
+                c.rc_dropframe_thresh = 75;
                 c.rc_end_usage = VPX_CBR;
                 c.rc_min_quantizer = 2;
-                c.rc_max_quantizer = 42;
+                c.rc_max_quantizer = 36;
                 c.rc_undershoot_pct = 10;
-                c.rc_overshoot_pct = 50;
+                c.rc_overshoot_pct = 30;
                 c.rc_buf_initial_sz = 1000;
                 c.rc_buf_optimal_sz = 2600;
                 c.rc_buf_sz = 4000;
@@ -186,7 +186,7 @@ impl Encoder {
                 call_vpx!(vpx_codec_control_(
                     &mut ctx,
                     VP8E_SET_CPUUSED as _,
-                    8 as c_int
+                    6 as c_int
                 ));
                 // set row level multi-threading
                 call_vpx!(vpx_codec_control_(
