@@ -169,7 +169,7 @@ impl Encoder {
                 c.rc_dropframe_thresh = 75;
                 c.rc_end_usage = VPX_CBR;
                 c.rc_min_quantizer = 2;
-                c.rc_max_quantizer = 36;
+                c.rc_max_quantizer = 50 - (config.quality * 2);
                 c.rc_undershoot_pct = 10;
                 c.rc_overshoot_pct = 30;
                 c.rc_buf_initial_sz = 1000;
@@ -320,6 +320,8 @@ pub struct Config {
     pub timebase: [c_int; 2],
     /// The target bitrate (in kilobits per second).
     pub bitrate: c_uint,
+    /// The quality (1 - 9, 9 being highest).
+    pub quality: c_uint,
     /// The codec
     pub codec: VideoCodecId,
 }
