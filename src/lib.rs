@@ -145,9 +145,11 @@ impl Encoder {
 
         // set the minimum keyframe interval
         c.kf_mode = vpx_sys::vpx_kf_mode::VPX_KF_AUTO;
-        c.kf_max_dist = 3;
+        c.kf_max_dist = 9 - config.quality;
         c.kf_min_dist = 0;
 
+        c.g_pass = vpx_enc_pass::VPX_RC_ONE_PASS;
+        c.g_usage = 0;
         c.g_threads = 8;
         c.g_error_resilient = VPX_ERROR_RESILIENT_DEFAULT;
 
@@ -186,7 +188,7 @@ impl Encoder {
                 call_vpx!(vpx_codec_control_(
                     &mut ctx,
                     VP8E_SET_CPUUSED as _,
-                    6 as c_int
+                    (10 - config.quality/2) as c_int
                 ));
                 // set row level multi-threading
                 call_vpx!(vpx_codec_control_(
