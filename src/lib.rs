@@ -145,7 +145,7 @@ impl Encoder {
 
         // set the minimum keyframe interval
         c.kf_mode = vpx_sys::vpx_kf_mode::VPX_KF_AUTO;
-        c.kf_max_dist = 9 - config.quality;
+        c.kf_max_dist = 4 - (config.quality/2);
         c.kf_min_dist = 0;
 
         c.g_pass = vpx_enc_pass::VPX_RC_ONE_PASS;
